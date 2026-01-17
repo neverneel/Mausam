@@ -1,0 +1,10 @@
+.loader_wrapper{
+    background-color: azure;
+    position: fixed;
+    inset: 0;
+}
+
+.loader_wrapper img{
+    width: 100%;
+    height: 100%;
+}
