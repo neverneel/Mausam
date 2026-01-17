@@ -1,24 +1,31 @@
-import"./style.css"
+import "./css/style.css"
+import "./css/loader.css"
 import { getWeather } from "./weather";
+import  loaderToggle  from "./loader";
 import { ICON_MAP } from "./iconMap";
 
 getWeather(30.744681, 76.665696, Intl.DateTimeFormat().resolvedOptions().timeZone).then(renderWeather).catch(e => {
+    loaderToggle(false)
     console.error(e)
     alert("Error getting weather")
 })
 
-function renderWeather({current,daily, hourly}){
+function renderWeather({ current, daily, hourly }) {
+    loaderToggle(false)
+    // console.log('current...', current)
+    // console.log('daily...', daily)
+    // console.log('hourly...', hourly)
     renderCurrentWeather(current)
     renderDailyWeather(daily)
-    renderHourlyWeather(hourly)  
-    document.body.classList.remove("blurred")
+    renderHourlyWeather(hourly)
+    // document.body.classList.remove("blurred")
 }
 
-function setValue(selector, value, {parent = document} = {}) {
+function setValue(selector, value, { parent = document } = {}) {
     parent.querySelector(`[data-${selector}]`).textContent = value
 }
 
-function getIconUrl(iconCode){
+function getIconUrl(iconCode) {
     return `icons/${ICON_MAP.get(iconCode)}.svg`
 }
 
@@ -39,15 +46,16 @@ function renderCurrentWeather(current) {
 // }
 
 
-const DAY_FORMATTER = new Intl.DateTimeFormat(undefined, {weekday: "short"})
+const DAY_FORMATTER = new Intl.DateTimeFormat(undefined, { weekday: "short" })
 const dailySection = document.querySelector("[data-day-section]")
 const dayCardTemplate = document.getElementById("day-card-template")
 function renderDailyWeather(daily) {
     dailySection.innerHTML = ""
     daily.forEach(day => {
         const element = dayCardTemplate.content.cloneNode(true)
-        setValue("temp", day.maxTemp, {parent: element})
-        setValue("date", DAY_FORMATTER.format(day.timestamp), {parent: element})
+        console.log('clone ele..', dayCardTemplate.content)
+        setValue("temp", day.maxTemp, { parent: element })
+        setValue("date", DAY_FORMATTER.format(day.timestamp), { parent: element })
         element.querySelector("[data-icon]").src = getIconUrl(day.iconCode)
         dailySection.append(element)
     })
@@ -55,20 +63,20 @@ function renderDailyWeather(daily) {
 
 
 
-const HOUR_FORMATTER = new Intl.DateTimeFormat(undefined, {hour: "numeric"})
+const HOUR_FORMATTER = new Intl.DateTimeFormat(undefined, { hour: "numeric" })
 const hourlySection = document.querySelector("[data-hour-section]")
 const hourRowTemplate = document.getElementById("hour-row-template")
 function renderHourlyWeather(hourly) {
     hourlySection.innerHTML = ""
     hourly.forEach(hour => {
         const element = hourRowTemplate.content.cloneNode(true)
-        setValue("temp", hour.temp, {parent: element})
-        setValue("fl-temp", hour.feelsLike, {parent: element})
-        setValue("wind", hour.windSpeed, {parent: element})
-        setValue("precip", hour.precip, {parent: element})
-        setValue("day", DAY_FORMATTER.format(hour.timestamp), {parent: element})
-        setValue("time", HOUR_FORMATTER.format(hour.timestamp), {parent: element})
+        setValue("temp", hour.temp, { parent: element })
+        setValue("fl-temp", hour.feelsLike, { parent: element })
+        setValue("wind", hour.windSpeed, { parent: element })
+        setValue("precip", hour.precip, { parent: element })
+        setValue("day", DAY_FORMATTER.format(hour.timestamp), { parent: element })
+        setValue("time", HOUR_FORMATTER.format(hour.timestamp), { parent: element })
         element.querySelector("[data-icon]").src = getIconUrl(hour.iconCode)
         hourlySection.append(element)
-})
+    })
 }
